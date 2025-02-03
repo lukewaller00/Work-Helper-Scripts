@@ -1,0 +1,13 @@
+[School]
+dfe_code=3162037
+school_name=Lathom Junior School
+mis_type=bromcom
+Bromcom_SchoolId=15759
+Bromcom_WebServiceUrl=https://cloudmis.bromcom.com/Nucleus/WebServices/ThirdParty/TPReadOnlyDataService.asmx
+
+[School]
+dfe_code=3162000
+school_name=Altmore Infant School
+mis_type=bromcom
+Bromcom_SchoolId=15751
+Bromcom_WebServiceUrl=https://cloudmis.bromcom.com/Nucleus/WebServices/ThirdParty/TPReadOnlyDataService.asmx

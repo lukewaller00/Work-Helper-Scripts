@@ -1,8 +1,5 @@
 from lxml import etree
 
-# Define the Bromcom permissions list you supplied
-
-
 bromcom_permissions ={
     "Addresses",
     "PersonMedicalConditions",
@@ -81,14 +78,17 @@ bromcom_permissions ={
     "PersonCommunications"
 }
 
-# Specify the path to your XML file
+# Path to your XML file
+
+# Path to use when setting up VS Code
+#xml_file_path = "BromcomPermissionChecker\\findEntitiesBySchoolID.xml"
+
+# Path to use when running from cmd
 xml_file_path = "BromcomPermissionChecker\\findEntitiesBySchoolID.xml"
 
-# Set up a parser with error handling
 parser = etree.XMLParser(recover=True)
 
 try:
-    # Parse the XML file with error recovery
     with open(xml_file_path, 'rb') as file:
         root = etree.parse(file, parser)
 
