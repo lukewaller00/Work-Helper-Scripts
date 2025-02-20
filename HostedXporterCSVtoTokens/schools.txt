@@ -1,5 +1,0 @@
-[School]
-dfe_code=
-school_name=
-mis_type=arbor
-Arbor_WebServiceUrl=
