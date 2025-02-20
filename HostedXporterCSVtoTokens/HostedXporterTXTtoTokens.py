@@ -85,7 +85,7 @@ class TokenCreator:
             if key in data:
                 config['Tokens'][key] = data[key]
         
-        folder_name = "Schools/"+data['dfe_code']
+        folder_name = "HostedXporterCSVtoTokens/Schools/"+data['dfe_code']
         os.makedirs(folder_name, exist_ok=True)
         
         file_path = os.path.join(folder_name, 'Tokens.ini')

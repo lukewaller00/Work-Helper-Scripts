@@ -1,3 +1,8 @@
 BromcomPermissionChecker/findEntitiesBySchoolID.xml
-AttendanceSummaryBreakdown\LearnerAttendanceSummary.xml
+AttendanceSummaryBreakdown/SIF/LearnerAttendanceSummary.xml
 HostedXporterCSVtoTokens/Schools
+HostedXporterCSVtoTokens/schools.txt
+random.txt
+
+HostedXporterCSVtoTokens/schools.txt
+AttendanceSummaryBreakdown/SIF/LearnerAttendanceSummary.xml

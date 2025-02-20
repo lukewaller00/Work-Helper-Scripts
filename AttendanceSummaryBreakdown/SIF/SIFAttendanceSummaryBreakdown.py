@@ -64,8 +64,8 @@ def process_attendance_summary(xml_path, csv_output_path):
             writer.writerow(row)
 
 # File paths
-xml_path = 'C:\\Users\\MohamedElAirou\Downloads\\AttendanceSummaryBreakdown\\AttendanceSummaryBreakdown\\LearnerAttendanceSummary.xml'
-csv_output_path = 'C:\\Users\\MohamedElAirou\\Downloads\\AttendanceSummaryBreakdown\\AttendanceSummaryBreakdown\\SIFWeeklyAttendanceBreakdown.csv'
+xml_path = 'AttendanceSummaryBreakdown\\SIF\\LearnerAttendanceSummary.xml'
+csv_output_path = 'AttendanceSummaryBreakdown\\SIF\\SIFWeeklyAttendanceBreakdown1.csv'
 
 # Run the script
 process_attendance_summary(xml_path, csv_output_path)

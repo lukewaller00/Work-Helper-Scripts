@@ -1,44 +1,68 @@
 from lxml import etree
-import requests
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
+import time
 
 def get_web_permissions():
-    """Scrape permissions from the Community Brands support page"""
+    """Scrape permissions from the Community Brands support page using Selenium"""
     url = "https://support.communitybrands.uk/s/article/Xporter-Enable-Access-in-Bromcom"
+    
+    options = Options()
+    options.add_argument("--headless")  # Run in headless mode
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    
     try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
+        driver.get(url)
+        time.sleep(5)  # Wait for JavaScript to load
         
-        soup = BeautifulSoup(response.content, 'html.parser')
+        html = driver.page_source
+        
+        # Save raw response for debugging
+        with open('selenium_response.html', 'w', encoding='utf-8') as f:
+            f.write(html)
+        
+        print("Saved fully loaded response to selenium_response.html")
+        
+        soup = BeautifulSoup(html, "html.parser")
         permissions = set()
         
-        # Extract permissions from all table cells
-        for td in soup.select('td[class*="xl"]'):
-            # Clean and split multi-line entries
-            text = td.get_text(separator=' ', strip=True)
-            for line in text.split('\n'):
-                cleaned = line.strip('• ').strip()
-                if cleaned and cleaned != ' ' and not cleaned.isspace():
-                    permissions.add(cleaned)
+        table = soup.find('table')
+        if not table:
+            print("No table found in the page")
+            return None
         
-        return permissions
+        for row in table.find_all('tr'):
+            for cell in row.find_all('td'):
+                text = cell.get_text(strip=True)
+                if text:
+                    permissions.add(text)
+        
+        
+        print(permissions)
 
-    except Exception as e:
-        print(f"Error fetching permissions: {e}")
-        return None
+        print(f"Found {len(permissions)} permissions in table")
+        return permissions
+    
+    finally:
+        driver.quit()
 
 def parse_xml_permissions(xml_path):
     """Parse permissions from XML with proper namespace handling"""
     try:
-        # Define XML namespaces
         namespaces = {
             'diffgr': 'urn:schemas-microsoft-com:xml-diffgram-v1',
             'msdata': 'urn:schemas-microsoft-com:xml-msdata'
         }
         
         tree = etree.parse(xml_path)
-        entities = tree.xpath('//diffgr:diffgram//Table/EntityName/text()', 
-                            namespaces=namespaces)
+        entities = tree.xpath('//diffgr:diffgram//Table/EntityName/text()', namespaces=namespaces)
         return set(entities)
         
     except Exception as e:
@@ -46,26 +70,19 @@ def parse_xml_permissions(xml_path):
         return None
 
 def main():
-    # Get permissions from website
     web_permissions = get_web_permissions()
     if not web_permissions:
         print("Using fallback permissions list")
-        web_permissions = {
-            "Addresses", "PersonMedicalConditions", "AdministrationDoctorTelephones",
-            "PersonMedicalEvents", "AssessmentAssociationAssessmentTypes",
-            # ... (rest of original hardcoded permissions)
-        }
-
-    # Get permissions from XML
-    xml_path = "BromcomPermissionChecker\\findEntitiesBySchoolID.xml"
+        web_permissions = {"Addresses", "PersonMedicalConditions", "PersonTelephones", "Students", "Staff"}
+    
+    xml_path = "BromcomPermissionChecker/findEntitiesBySchoolID.xml"
     xml_permissions = parse_xml_permissions(xml_path)
     if not xml_permissions:
         return
-
-    # Compare permissions
+    
     missing_in_xml = web_permissions - xml_permissions
     extra_in_xml = xml_permissions - web_permissions
-
+    
     print("\n=== Permission Validation Results ===")
     
     if missing_in_xml:
